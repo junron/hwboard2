@@ -19,4 +19,4 @@ pluginManagement {
         }
     }
 }
-rootProject.name = "hwboard-2"
+rootProject.name = "hwboard2"
