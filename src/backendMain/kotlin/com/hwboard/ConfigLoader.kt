@@ -1,0 +1,27 @@
+package com.hwboard
+
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.UnstableDefault
+import kotlinx.serialization.json.Json
+import java.io.File
+
+object ConfigLoader {
+  @UnstableDefault
+  fun load(): HwboardConfig {
+    val data = File("config.json").readText()
+    return Json.nonstrict.parse(HwboardConfig.serializer(),data)
+  }
+}
+
+@Serializable
+data class HwboardConfig(val jwtSecret: String, val discord: DiscordConfig)
+
+@Serializable
+data class DiscordConfig(
+    val clientId: String,
+    val clientSecret: String,
+    val redirectUrl: String,
+    val botToken: String,
+    val guildId: String,
+    val adminRole: String
+)
