@@ -1,8 +1,14 @@
 package com.hwboard
 
 import com.hwboard.WebsocketMessage.*
+import com.hwboard.auth.DiscordAuth
+import com.hwboard.auth.DiscordUser
+import com.hwboard.auth.Jwt
+import io.ktor.application.ApplicationCall
+import io.ktor.http.cio.websocket.CloseReason
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.WebSocketSession
+import io.ktor.http.cio.websocket.close
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.UnstableDefault
 
@@ -22,6 +28,18 @@ object BackendWS {
         broadcast(Connect(message.user))
       }
     }
+  }
+
+  @UnstableDefault
+  suspend fun handleConnect(call: ApplicationCall, context: WebSocketSession) {
+    val token = call.request.cookies["user_sess"] ?: return context.close(CloseReason(403, "Unauthenticated"))
+    val authenticatedUser = Jwt.verifyAndDecode(token, DiscordUser.serializer())
+        ?: return context.close(CloseReason(403, "Unauthenticated"))
+    val user = DiscordAuth.getAuthorization(authenticatedUser)
+    if (!user.read) return context.close(CloseReason(401, "Unauthorized"))
+    users[user] = context
+    send(Auth(user), context)
+    broadcast(Connect(user))
   }
 
   @UnstableDefault

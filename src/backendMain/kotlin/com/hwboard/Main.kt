@@ -1,10 +1,10 @@
 package com.hwboard
 
-import com.github.kittinunf.fuel.util.decodeBase64ToString
+import com.hwboard.BackendWS.handleConnect
 import com.hwboard.BackendWS.handleDisconnect
 import com.hwboard.auth.DiscordAuth
 import com.hwboard.auth.DiscordUser
-import com.hwboard.auth.Jwt
+import com.hwboard.auth.Jwt.verifyAndDecode
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.http.Cookie
@@ -17,7 +17,6 @@ import io.ktor.routing.get
 import io.ktor.routing.routing
 import io.ktor.websocket.webSocket
 import kotlinx.serialization.UnstableDefault
-import kotlinx.serialization.json.Json
 import pl.treksoft.kvision.remote.kvisionInit
 
 @UnstableDefault
@@ -48,9 +47,8 @@ fun Application.main() {
     get("/verify") {
       val token = call.request.cookies["user_sess"]
       if (token != null) {
-        val payload = Jwt.verify(token).payload.decodeBase64ToString()
-        if (payload != null) {
-          val authenticatedUser = Json.parse(DiscordUser.serializer(), payload)
+        val authenticatedUser = verifyAndDecode(token, DiscordUser.serializer())
+        if (authenticatedUser != null) {
           val user = DiscordAuth.getAuthorization(authenticatedUser)
           call.respondText { user.toString() }
           return@get
@@ -60,13 +58,14 @@ fun Application.main() {
     }
     static("/static") {
       if (isJar) resources("/assets")
-      else files("bundle")
+      else files("build/bundle")
     }
     static {
       if (isJar) defaultResource("/assets/index.html")
-      else default("resources/main/index.html")
+      else default("build/resources/main/index.html")
     }
     webSocket("/") {
+      handleConnect(call, this)
       for (frame in incoming) {
         when (frame) {
           is Frame.Text -> {

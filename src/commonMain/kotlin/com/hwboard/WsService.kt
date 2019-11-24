@@ -26,7 +26,7 @@ sealed class WebsocketMessage {
 }
 
 @Serializable
-data class User(val name: String)
+open class User(open val name: String = "")
 
 
 val messageModule = SerializersModule {
