@@ -1,5 +1,6 @@
 package com.hwboard
 
+import com.github.kittinunf.fuel.util.decodeBase64ToString
 import com.hwboard.BackendWS.handleConnect
 import com.hwboard.BackendWS.handleDisconnect
 import com.hwboard.auth.DiscordAuth
@@ -8,6 +9,7 @@ import com.hwboard.auth.Jwt.verifyAndDecode
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.http.Cookie
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
 import io.ktor.http.content.*
@@ -18,6 +20,8 @@ import io.ktor.routing.routing
 import io.ktor.websocket.webSocket
 import kotlinx.serialization.UnstableDefault
 import pl.treksoft.kvision.remote.kvisionInit
+
+val ok = HttpStatusCode(200, "T0sgQk9PTUVS".decodeBase64ToString()!!)
 
 @UnstableDefault
 fun Application.main() {
@@ -50,11 +54,11 @@ fun Application.main() {
         val authenticatedUser = verifyAndDecode(token, DiscordUser.serializer())
         if (authenticatedUser != null) {
           val user = DiscordAuth.getAuthorization(authenticatedUser)
-          call.respondText { user.toString() }
+          call.respondText(status = ok) { user.toString() }
           return@get
         }
       }
-      call.respondText { "Token not found" }
+      call.respondText(status = HttpStatusCode.NotFound) { "Token not found" }
     }
     static("/static") {
       if (isJar) resources("/assets")
