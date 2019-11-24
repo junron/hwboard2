@@ -16,7 +16,7 @@ object FrontendWS {
   fun websocketConnect() {
     val webSocketLocal = WebSocket(
         window.location.protocol.replace("http", "ws") +
-            "//" + window.location.host + "/")
+            "//" + window.location.host + "/websocket")
     webSocketLocal.onopen = {
       webSocket = webSocketLocal
       window.asDynamic()["websocket"] = webSocket

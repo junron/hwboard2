@@ -68,7 +68,7 @@ fun Application.main() {
       if (isJar) defaultResource("/assets/index.html")
       else default("build/resources/main/index.html")
     }
-    webSocket("/") {
+    webSocket("/websocket") {
       handleConnect(call, this)
       for (frame in incoming) {
         when (frame) {
