@@ -8,8 +8,13 @@ import java.io.File
 object ConfigLoader {
   @UnstableDefault
   fun load(): HwboardConfig {
-    val data = File("config.json").readText()
-    return Json.nonstrict.parse(HwboardConfig.serializer(),data)
+    val file =
+        if (File("config.json").exists())
+          File("config.json")
+        else
+          File("../config.json")
+    val data = file.readText().trim()
+    return Json.nonstrict.parse(HwboardConfig.serializer(), data)
   }
 }
 

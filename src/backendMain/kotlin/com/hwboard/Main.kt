@@ -26,7 +26,6 @@ val ok = HttpStatusCode(200, "T0sgQk9PTUVS".decodeBase64ToString()!!)
 @UnstableDefault
 fun Application.main() {
   kvisionInit()
-
   val isJar = {}.javaClass.getResource("/assets/index.html") != null
   routing {
     get("/discord/token") {
@@ -62,11 +61,11 @@ fun Application.main() {
     }
     static("/static") {
       if (isJar) resources("/assets")
-      else files("build/bundle")
+      else files("bundle")
     }
     static {
       if (isJar) defaultResource("/assets/index.html")
-      else default("build/resources/main/index.html")
+      else default("resources/main/index.html")
     }
     webSocket("/websocket") {
       handleConnect(call, this)

@@ -24,7 +24,7 @@ plugins {
 apply(plugin = "pl.treksoft.kvision")
 
 version = "1.0.0-SNAPSHOT"
-group = "com.example"
+group = "com.hwboard"
 
 repositories {
   mavenCentral()
@@ -115,6 +115,7 @@ kotlin {
         implementation("pl.treksoft:kvision-bootstrap-css:$kvisionVersion")
         implementation("pl.treksoft:kvision-chart:$kvisionVersion")
       }
+
     }
     getByName("frontendTest") {
       dependencies {
@@ -182,18 +183,8 @@ tasks {
 }
 afterEvaluate {
   tasks {
-    //    getByName("frontendProcessResources", Copy::class) {
-//      dependsOn("npm-install")
-//      exclude("**/*.pot")
-//    }
     getByName("webpack-run", WebPackRunTask::class) {
       dependsOn("frontendMainClasses")
-//      doFirst {
-//        copy {
-//          from((project.tasks["frontendProcessResources"] as Copy).destinationDir)
-//          into((project.tasks["processResources"] as Copy).destinationDir)
-//        }
-//      }
     }
     getByName("webpack-bundle") {
       dependsOn("frontendMainClasses", "runDceFrontendKotlin")
@@ -234,6 +225,12 @@ afterEvaluate {
       from(from)
       inputs.files(from)
       outputs.file(archiveFile)
+    }
+    create("restart") {
+      group = "run"
+      dependsOn("webpack-bundle", "ktor-run", "ktor-stop")
+      findByName("ktor-run")?.mustRunAfter("ktor-stop")
+      findByName("ktor-run")?.mustRunAfter("webpack-bundle")
     }
     getByName("backendJar").group = "package"
     replace("jar", Jar::class).apply {
