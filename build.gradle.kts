@@ -96,6 +96,8 @@ kotlin {
         implementation("org.glassfish.jersey.media:jersey-media-json-jackson:2.22")
         implementation("com.github.kittinunf.fuel:fuel:$fuelVersion")
         implementation("io.ktor:ktor-auth-jwt:$ktorVersion")
+        implementation("org.jetbrains.exposed:exposed:0.17.7")
+        implementation("org.xerial:sqlite-jdbc:3.28.0")
       }
     }
     getByName("backendTest") {
