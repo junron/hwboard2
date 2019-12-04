@@ -1,0 +1,3 @@
+rootProject.name = 'hwboard-2'
+
+include "backend", "frontend"
