@@ -13,6 +13,7 @@ subprojects { p ->
         dependencies {
             classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
             classpath "org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.45"
+            classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         }
     }
 }
@@ -21,7 +22,10 @@ subprojects {
     ext.kotlin_version = "1.3.61"
     ext.html_version = "0.6.12"
     ext.ktor_version = "1.2.6"
-//    ext.squash_version = "0.2.2"
+    ext.oauthVersion = "1.0.2"
+    ext.fuelVersion = "2.2.1"
+    ext.jwtVersion = "3.8.3"
+    ext.logbackVersion = "1.2.3"
 
     repositories {
         mavenLocal()
@@ -29,6 +33,7 @@ subprojects {
         mavenCentral()
         maven { url "https://dl.bintray.com/kotlin/kotlinx.html" }
         maven { url "https://dl.bintray.com/kotlin/ktor" }
-//        maven { url "https://dl.bintray.com/kotlin/squash" }
+        maven { url "https://kotlin.bintray.com/js-externals" }
+        maven { url "https://jitpack.io" }
     }
 }

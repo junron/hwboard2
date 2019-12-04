@@ -3,35 +3,36 @@ version = '0.0.1-SNAPSHOT'
 apply plugin: 'kotlin2js'
 apply plugin: 'kotlin-dce-js'
 apply plugin: 'org.jetbrains.kotlin.frontend'
+apply plugin: 'kotlinx-serialization'
 
 repositories {
     jcenter()
 }
+evaluationDependsOn(":common")
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+    compile project(":common").sourceSets.main.output
+    compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.14.0"
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.2"
 }
 
 kotlinFrontend {
-// uncomment this to specify exact nodejs version (bundle will be downloaded)
-//    downloadNodeJsVersion = "8.7.0"
 
     sourceMaps = production
 
     npm {
-        replaceVersion("kotlinx-html-js", "1.1.0")
-        replaceVersion("kotlinx-html-shared", "1.1.0")
-        replaceVersion("kotlin-js-library", "1.1.0")
-
-        dependency("jquery")
-        devDependency("dukat")
+        dependency("framework7","5.1.3")
+        dependency("style-loader","1.0.1")
+        dependency("css-loader","3.2.1")
     }
 
     webpackBundle {
+        mode = production ? "production" : "development"
         publicPath = "/frontend/"
         contentPath = file("resources/web")
-        port = 8080
-        proxyUrl = "http://localhost:9090"
+        port = 9090
+        proxyUrl = "http://localhost:8080"
     }
     define("PRODUCTION", production)
 }
@@ -40,13 +41,14 @@ compileKotlin2Js {
     kotlinOptions.metaInfo = true
     kotlinOptions.outputFile = "$project.buildDir.path/js/${project.name}.js"
     kotlinOptions.sourceMap = true
-    kotlinOptions.moduleKind = 'commonjs'
-    kotlinOptions.main = "call"
+    kotlinOptions.moduleKind = "umd"
+//    kotlinOptions.main = "call"
 }
 
 sourceSets {
     main {
         kotlin.srcDirs += "src"
+        kotlin.srcDirs += "../common/src"
         resources.srcDirs += "resources"
         output.resourcesDir = "build/js/resources"
     }
