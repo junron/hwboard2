@@ -1,24 +1,32 @@
 package com.hwboard
 
 import externals.ctor
+import externals.require
+import kotlin.browser.window
 import kotlin.js.json
 
 object Framework7 {
+  private val Panel = require("framework7/components/panel/panel.js")
+
   val Framework7: (dynamic) -> dynamic = {
-    ctor(externals.require("framework7").default, it)
+    ctor(require("framework7").default, it)
   }
+
   fun init(): dynamic{
     val app = Framework7(
       json(
         // App root element
         "root" to "#app",
+        "theme" to "md",
         // App Name
-        "name" to "My App",
+        "name" to "Hwboard",
         // App id
-        "id" to "com.myapp.test",
+        "id" to "web.hwboard.hwboard2",
+        "pushState" to true,
         // Enable swipe panel
-        "panel" to json(
-          "swipe" to "left"
+        "view" to json(
+          "pushState" to true,
+          "mdSwipeBack" to true
         ),
         "routes" to listOf(
           json(
@@ -28,6 +36,7 @@ object Framework7 {
         )
       )
     )
+    app.loadModule(Panel.default)
     app.views.create(".view-main")
     return app
   }

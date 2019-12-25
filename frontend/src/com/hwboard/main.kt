@@ -9,6 +9,7 @@ import kotlin.browser.window
 fun main() {
   js("require('framework7/css/framework7.bundle.css')")
   js("require('style.css')")
+  js("require('fonts.css')")
   window.asDynamic()["f7app"] = Framework7.init()
   window.asDynamic()["ws"] = FrontendWS
   websocketConnect()

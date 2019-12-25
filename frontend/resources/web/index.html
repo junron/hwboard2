@@ -1,51 +1,90 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <!-- Required meta tags-->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <!-- Color theme for statusbar (Android only) -->
-    <meta name="theme-color" content="#2196f3">
-    <!-- Your app title -->
-    <title>My App</title>
-</head>
-<body>
-<!-- App root element -->
-<div id="app">
+<html lang="en" class="md">
+<body id="app">
+<!-- menu -->
+<div class="panel panel-left panel-reveal panel-init">
+    <div class="list links-list">
+        <ul>
+            <li>
+                <a href="/" class="panel-close">
+                    Homework
+                </a>
+            </li>
+            <li>
+                <a href="/channels/" class="panel-close">
+                    Channels
+                </a>
+            </li>
+            <li>
+                <a href="/timetable/" class="panel-close">
+                    Timetable
+                </a>
+            </li>
+            <li>
+                <a href="/calendar/" class="panel-close">
+                    Calendar
+                </a>
+            </li>
+            <li>
+                <a href="/analytics/" class="panel-close">
+                    Statistics
+                </a>
+            </li>
+            <li>
+                <a href="/logout" class="color-red panel-close">
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
 
-    <!-- Your main view, should have "view-main" class -->
-    <div class="view view-main">
-        <!-- Initial Page, "data-name" contains page name -->
-        <div data-name="home" class="page">
+<div class="view view-main">
 
-            <!-- Top Navbar -->
-            <div class="navbar">
-                <div class="navbar-bg"></div>
-                <div class="navbar-inner">
-                    <div class="title">Awesome App</div>
+    <div class="page page-current">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <!-- bar icon and link -->
+                <a href="#" class="left panel-open" data-panel=".panel-left" style="padding-left:10px"><i class="bar"
+                                                                                                          style="color:#ffffff">&#xe900;</i></a>
+                <div class="item-content title">
+                    <div class="item-inner item-title">
+                        <div>Homework Board</div>
+                        <div class="item-footer" id="connection-status" style="font-size:16px">Connected</div>
+                    </div>
                 </div>
+                <a class="right" href="/popups/sort/"><i class="material-icons" style="color:#ffffff">&#xE164;</i></a>
             </div>
-
-            <!-- Bottom Toolbar -->
-            <div class="toolbar toolbar-bottom">
-                <div class="toolbar-inner">
-                    <!-- Toolbar links -->
-                    <a href="#" class="link">Link 1</a>
-                    <a href="#" class="link">Link 2</a>
-                </div>
+        </div>
+        <div class="page-content block ptr-content" data-ptr-distance="55" style="padding-top:0px" role="main">
+            <div class="ptr-preloader">
+                <div class="preloader"><span class="preloader-inner">
+              <span class="preloader-inner-gap"></span>
+              <span class="preloader-inner-left">
+                  <span class="preloader-inner-half-circle"></span>
+              </span>
+              <span class="preloader-inner-right">
+                  <span class="preloader-inner-half-circle"></span>
+              </span>
+            </span></div>
+                <div class="ptr-arrow" style=""></div>
             </div>
-
-            <!-- Scrollable page content -->
-            <div class="page-content">
-                <p>Page content goes here</p>
-                <!-- Link to another page -->
-                <a href="/about/">About app</a>
+            <div class="list" id="hwboard-homework-list" style="position:relative;top:57px">
+                <!--                    <%- renderer(data,sortType,sortOrder,subjectChannelMapping,subjectTagMapping) %>-->
             </div>
+        </div>
+        <!-- Floating App button
+        Clicking will cause the edit homework popup to appear
+        Only show for admins
+        -->
+        <div class="fab fab-right-bottom admin-only color-green-blue" aria-label="Add homework">
+            <a id="fab-add-homework" href="/popups/add/">
+                <i class="f7-icons icon material-icons">&#xe145;</i>
+            </a>
         </div>
     </div>
 </div>
-<!-- Path to Framework7 Library Bundle JS-->
-<script type="text/javascript" src="/frontend/frontend.bundle.js"></script>
+
+<script src="/frontend/frontend.bundle.js"></script>
 </body>
 </html>

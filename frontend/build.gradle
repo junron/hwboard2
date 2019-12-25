@@ -25,6 +25,7 @@ kotlinFrontend {
         dependency("framework7","5.1.3")
         dependency("style-loader","1.0.1")
         dependency("css-loader","3.2.1")
+        dependency("file-loader")
     }
 
     webpackBundle {
