@@ -27,6 +27,9 @@ object BackendWS {
         send(message, context)
         broadcast(Connect(message.user))
       }
+      is HomeworkMessage ->{
+        println(message.homework)
+      }
     }
   }
 

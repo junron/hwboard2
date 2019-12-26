@@ -39,6 +39,7 @@ object Framework7 {
     app.loadModule(Panel.default)
     app.loadModule(Swipeout.default)
     app.views.create(".view-main")
+    State.app = app
     return app
   }
 }

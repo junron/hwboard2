@@ -20,11 +20,17 @@ sealed class WebsocketMessage {
 
   @Serializable
   data class Message(val message: String, val sender: User, val recipient: User) : WebsocketMessage()
+
+  @Serializable
+  data class HomeworkMessage(val homework: Homework) : WebsocketMessage()
 }
 
 @Serializable
 sealed class User{
   abstract val name: String
+  abstract val read: Boolean
+  abstract val write: Boolean
+  abstract val superuser: Boolean
 }
 
 @Serializable
@@ -33,7 +39,7 @@ data class DiscordUser(
   @SerialName("username")
   override val name: String,
   val id: String,
-  val read: Boolean = false,
-  val write: Boolean = false,
-  val superuser: Boolean = false
+  override val read: Boolean = false,
+  override val write: Boolean = false,
+  override val superuser: Boolean = false
 ): User()

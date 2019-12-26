@@ -62,6 +62,11 @@ object FrontendWS {
   }
 
   @UnstableDefault
+  fun sendHomework(homework: Homework){
+    send(HomeworkMessage(homework))
+  }
+
+  @UnstableDefault
   private fun send(message: WebsocketMessage) {
     if (!::webSocket.isInitialized) return
     webSocket.send(Json.stringify(WebsocketMessage.serializer(), message))
