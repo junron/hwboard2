@@ -2,7 +2,6 @@ package com.hwboard
 
 import com.hwboard.WebsocketMessage.*
 import com.hwboard.auth.DiscordAuth
-import com.hwboard.auth.DiscordUser
 import com.hwboard.auth.Jwt
 import io.ktor.application.ApplicationCall
 import io.ktor.http.cio.websocket.CloseReason
@@ -11,6 +10,7 @@ import io.ktor.http.cio.websocket.WebSocketSession
 import io.ktor.http.cio.websocket.close
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.UnstableDefault
+import kotlinx.serialization.json.Json
 
 object BackendWS {
   private val users = mutableMapOf<User, WebSocketSession>()
@@ -56,8 +56,7 @@ object BackendWS {
 
   @UnstableDefault
   suspend fun send(message: WebsocketMessage, context: WebSocketSession) {
-    val messageWrapper = MessageWrapper(message)
-    context.outgoing.send(Frame.Text(json.stringify(MessageWrapper.serializer(), messageWrapper)))
+    context.outgoing.send(Frame.Text(Json.stringify(WebsocketMessage.serializer(), message)))
   }
 
 }

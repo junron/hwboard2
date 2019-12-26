@@ -8,6 +8,7 @@ apply plugin: 'kotlinx-serialization'
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     compile "org.jetbrains.kotlinx:kotlinx-serialization-runtime:0.14.0"
+    implementation "com.benasher44:uuid:0.0.6"
 }
 
 sourceSets {

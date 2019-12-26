@@ -4,8 +4,8 @@ import com.github.kittinunf.fuel.util.decodeBase64ToString
 import com.hwboard.BackendWS.handleConnect
 import com.hwboard.BackendWS.handleDisconnect
 import com.hwboard.auth.DiscordAuth
-import com.hwboard.auth.DiscordUser
 import com.hwboard.auth.Jwt.verifyAndDecode
+import com.hwboard.auth.createJwt
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -21,6 +21,7 @@ import io.ktor.routing.routing
 import io.ktor.websocket.WebSockets
 import io.ktor.websocket.webSocket
 import kotlinx.serialization.UnstableDefault
+import kotlinx.serialization.json.Json
 
 val ok = HttpStatusCode(200, "T0sgQk9PTUVS".decodeBase64ToString()!!)
 val isJar = {}.javaClass.getResource("/assets/index.html") != null
@@ -74,8 +75,8 @@ fun Application.main() {
         when (frame) {
           is Frame.Text -> {
             val text = frame.readText()
-            val message = json.parse(MessageWrapper.serializer(), text)
-            BackendWS.handle(message.m, this)
+            val message = Json.parse(WebsocketMessage.serializer(), text)
+            BackendWS.handle(message, this)
           }
         }
       }

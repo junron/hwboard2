@@ -3,8 +3,7 @@ package com.hwboard.auth
 import com.auth0.jwt.JWT
 import com.github.kittinunf.fuel.httpGet
 import com.hwboard.ConfigLoader
-import com.hwboard.User
-import kotlinx.serialization.SerialName
+import com.hwboard.DiscordUser
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
@@ -67,22 +66,12 @@ object DiscordAuth {
   }
 }
 
-@Serializable
 @UnstableDefault
-data class DiscordUser(
-  @SerialName("username")
-  override val name: String,
-  val id: String,
-  val read: Boolean = false,
-  val write: Boolean = false,
-  val superuser: Boolean = false
-): User() {
-  fun createJwt() = Jwt.sign(
-    JWT.create()
-      .withClaim("username", name)
-      .withClaim("id", id)
-  )
-}
+fun DiscordUser.createJwt() = Jwt.sign(
+  JWT.create()
+    .withClaim("username", name)
+    .withClaim("id", id)
+)
 
 @Serializable
 data class GuildMember(val nick: String?, val roles: List<String>)

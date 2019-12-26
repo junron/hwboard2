@@ -4,6 +4,7 @@ import com.hwboard.WebsocketMessage.*
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.serialization.UnstableDefault
+import kotlinx.serialization.json.Json
 import org.w3c.dom.MessageEvent
 import org.w3c.dom.WebSocket
 import kotlin.browser.window
@@ -11,6 +12,7 @@ import kotlin.browser.window
 object FrontendWS {
   private lateinit var webSocket: WebSocket
   private lateinit var user: User
+  private val callbacks = mutableListOf<(Unit) -> Unit>()
 
   @UnstableDefault
   fun websocketConnect() {
@@ -30,8 +32,7 @@ object FrontendWS {
   private fun handle(event: MessageEvent) {
     GlobalScope.launch {
       val data = event.data as? String ?: return@launch
-      val (message) = json.parse(MessageWrapper.serializer(), data)
-      when (message) {
+      when (val message = Json.parse(WebsocketMessage.serializer(), data)) {
         is Message -> {
           println(message)
         }
@@ -47,15 +48,13 @@ object FrontendWS {
         is Auth -> {
           println("Authenticated as ${message.user.name}")
           user = message.user
+          State.user = user
+          callbacks.forEach { it(Unit) }
         }
       }
     }
   }
 
-  @UnstableDefault
-  fun auth(name: String) {
-    send(Auth(User(name)))
-  }
 
   @UnstableDefault
   fun sendMessage(message: String, recipient: User) {
@@ -65,7 +64,10 @@ object FrontendWS {
   @UnstableDefault
   private fun send(message: WebsocketMessage) {
     if (!::webSocket.isInitialized) return
-    val messageWrapper = MessageWrapper(message)
-    webSocket.send(json.stringify(MessageWrapper.serializer(), messageWrapper))
+    webSocket.send(Json.stringify(WebsocketMessage.serializer(), message))
+  }
+
+  fun onConnect(callback:(Unit) -> Unit) {
+    callbacks += callback
   }
 }

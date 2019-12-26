@@ -2,11 +2,11 @@ package com.hwboard
 
 import externals.ctor
 import externals.require
-import kotlin.browser.window
 import kotlin.js.json
 
 object Framework7 {
   private val Panel = require("framework7/components/panel/panel.js")
+  private val Swipeout = require("framework7/components/swipeout/swipeout.js")
 
   val Framework7: (dynamic) -> dynamic = {
     ctor(require("framework7").default, it)
@@ -37,6 +37,7 @@ object Framework7 {
       )
     )
     app.loadModule(Panel.default)
+    app.loadModule(Swipeout.default)
     app.views.create(".view-main")
     return app
   }

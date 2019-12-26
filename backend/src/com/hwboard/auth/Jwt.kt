@@ -21,7 +21,8 @@ object Jwt {
   fun sign(token: JWTCreator.Builder) = token.sign(algorithm)!!
 
   @UnstableDefault
-  fun <T> verifyAndDecode(token: String, serializer: DeserializationStrategy<T>): T? = verifier.verify(token)?.payload?.decodeBase64ToString()?.let {
-    Json.parse(serializer, it)
-  }
+  fun <T> verifyAndDecode(token: String, serializer: DeserializationStrategy<T>): T? =
+    verifier.verify(token)?.payload?.decodeBase64ToString()?.let {
+      Json.parse(serializer, it)
+    }
 }

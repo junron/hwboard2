@@ -1,11 +1,8 @@
 package com.hwboard
 
-import com.hwboard.WebsocketMessage.*
-import kotlinx.serialization.Polymorphic
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-
+import kotlinx.serialization.UnstableDefault
 
 @Serializable
 sealed class WebsocketMessage {
@@ -26,20 +23,17 @@ sealed class WebsocketMessage {
 }
 
 @Serializable
-open class User(open val name: String = "")
-
-
-val messageModule = SerializersModule {
-  polymorphic<WebsocketMessage> {
-    Disconnect::class with Disconnect.serializer()
-    Connect::class with Connect.serializer()
-    Message::class with Message.serializer()
-    Auth::class with Auth.serializer()
-    Error::class with Error.serializer()
-  }
+sealed class User{
+  abstract val name: String
 }
 
-val json = Json(context = messageModule)
-
 @Serializable
-data class MessageWrapper(@Polymorphic val m: WebsocketMessage)
+@UnstableDefault
+data class DiscordUser(
+  @SerialName("username")
+  override val name: String,
+  val id: String,
+  val read: Boolean = false,
+  val write: Boolean = false,
+  val superuser: Boolean = false
+): User()
