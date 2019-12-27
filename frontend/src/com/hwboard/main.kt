@@ -4,11 +4,12 @@ import com.benasher44.uuid.uuid4
 import com.hwboard.FrontendWS.websocketConnect
 import com.hwboard.interop.moment.moment
 import com.hwboard.interop.toDate
+import externals.require
 import kotlinx.serialization.UnstableDefault
 import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.js.Date as JsDate
-
+import com.hwboard.State.Homework
 
 @UnstableDefault
 fun main() {
@@ -18,10 +19,11 @@ fun main() {
   js("require('homework.css')")
   window.asDynamic()["f7app"] = Framework7.init()
   window.asDynamic()["ws"] = FrontendWS
+  window.asDynamic()["state"] = State
 
   websocketConnect()
   FrontendWS.onConnect {
-    val homework = listOf(
+    Homework.homework  = listOf(
       Homework(
         uuid4().toString(),
         Subject("English"),
@@ -59,8 +61,6 @@ fun main() {
         JsDate().toDate()
       )
     )
-    document.getElementById("hwboard-homework-list")
-      ?.innerHTML = homework.render(SortType.Subject, false)
-    State.app?.swipeout.init()
+    Homework.rerender()
   }
 }

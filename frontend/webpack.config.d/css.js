@@ -14,4 +14,8 @@ config.module.rules.push({
     }]
 });
 
-config.resolve.extensions = ['.js', '.css',]
+config.resolve.extensions = ['.js', '.css',];
+
+config.node = {
+    fs: 'empty'
+};

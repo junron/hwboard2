@@ -27,7 +27,7 @@ object BackendWS {
         send(message, context)
         broadcast(Connect(message.user))
       }
-      is HomeworkMessage ->{
+      is HomeworkMessage -> {
         println(message.homework)
       }
     }
@@ -37,9 +37,15 @@ object BackendWS {
   suspend fun handleConnect(call: ApplicationCall, context: WebSocketSession) {
     val token = call.request.cookies["user_sess"] ?: return context.close(CloseReason(403, "Unauthenticated"))
     val authenticatedUser = Jwt.verifyAndDecode(token, DiscordUser.serializer())
-      ?: return context.close(CloseReason(403, "Unauthenticated"))
+      ?: return run {
+        send(Error("Unauthenticated"), context)
+        context.close(CloseReason(403, "Unauthenticated"))
+      }
     val user = DiscordAuth.getAuthorization(authenticatedUser)
-    if (!user.read) return context.close(CloseReason(401, "Unauthorized"))
+    if (!user.read) return run {
+      send(Error("Unauthorized"), context)
+      context.close(CloseReason(401, "Unauthorized"))
+    }
     users[user] = context
     send(Auth(user), context)
     broadcast(Connect(user))

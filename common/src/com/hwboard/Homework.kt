@@ -18,12 +18,27 @@ data class Homework(
 )
 
 enum class SortType {
-  Subject,Date
+  Subject, Date;
+
+  companion object {
+    fun deserialize(name: String) =
+      when(name){
+        "Due date" -> Date
+        "Subject name" -> Subject
+        else -> null
+      }
+  }
+  fun serialize(): String {
+    return when(this){
+      Subject -> "Subject name"
+      Date -> "Due date"
+    }
+  }
 }
 
 @Serializable
-data class Subject(val name: String){
-  fun toHex(){
+data class Subject(val name: String) {
+  fun toHex() {
     name.toUtf8Bytes().joinToString("") {
       it.toInt().toString(16).padStart(2, '0')
     }
