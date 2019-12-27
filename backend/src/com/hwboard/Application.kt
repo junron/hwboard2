@@ -13,7 +13,10 @@ import io.ktor.http.Cookie
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.readText
-import io.ktor.http.content.*
+import io.ktor.http.content.defaultResource
+import io.ktor.http.content.files
+import io.ktor.http.content.resources
+import io.ktor.http.content.static
 import io.ktor.response.respondRedirect
 import io.ktor.response.respondText
 import io.ktor.routing.get
@@ -61,13 +64,13 @@ fun Application.main() {
       }
       call.respondText(status = HttpStatusCode.NotFound) { "Token not found" }
     }
-    static("/static") {
+    static("/frontend") {
       if (isJar) resources("/assets")
-      else files("bundle")
+      else files("../frontend/build/bundle")
     }
     static {
       if (isJar) defaultResource("/assets/index.html")
-      else default("resources/main/index.html")
+      else defaultResource("/web/index.html")
     }
     webSocket("/websocket") {
       handleConnect(call, this)

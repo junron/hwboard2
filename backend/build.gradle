@@ -23,6 +23,7 @@ dependencies {
 
 sourceSets {
     main.resources.srcDirs += "resources"
+    main.resources.srcDirs += "../frontend/resources"
     main.kotlin.srcDirs += "src"
     main.compileClasspath += files("../common/build/classes")
 }

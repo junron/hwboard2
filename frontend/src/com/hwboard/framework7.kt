@@ -41,17 +41,7 @@ object Framework7 {
           "url" to "index.html",
           "on" to json(
             "pageBeforeIn" to { e: dynamic ->
-              println("ok")
-              //          prevDataHash = "";
-//          if(Framework7App.ptr){
-//            ptr = Framework7App.ptr.get('.page-current .ptr-content');
-//            ptr.on("refresh",async (_,done)=>{
-//              $("#hwboard-homework-list").html("<h2 class=homework-reload-status>Reloading homework...</h2>");
-//              setTimeout(async ()=>{
-//                await loadHomework(true);
-//                done();
-//              },300);
-//            });
+              println(e)
             }
           ),
           "routes" to arrayOf(
