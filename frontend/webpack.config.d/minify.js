@@ -1,16 +1,9 @@
 if (defined.PRODUCTION) {
-    const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+  const TerserPlugin = require('terser-webpack-plugin');
 
-    config.optimization = {
-        minimizer: [
-            new UglifyJSPlugin({
-                uglifyOptions: {
-                    compress: {
-                        unused: false
-                    }
-                }
-            })
-        ]
-    }
+  config.optimization = {
+    minimize: true,
+    minimizer: [new TerserPlugin()]
+  }
 
 }

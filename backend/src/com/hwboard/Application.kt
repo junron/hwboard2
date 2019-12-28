@@ -65,7 +65,7 @@ fun Application.main() {
       call.respondText(status = HttpStatusCode.NotFound) { "Token not found" }
     }
     static("/frontend") {
-      if (isJar) resources("/assets")
+      if (isJar) resources("/assets/bundle")
       else files("../frontend/build/bundle")
     }
     static {
