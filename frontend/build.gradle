@@ -8,6 +8,8 @@ apply plugin: 'kotlinx-serialization'
 repositories {
     jcenter()
     maven { url = 'https://dl.bintray.com/rjaros/kotlin' }
+    maven { url = "https://kotlin.bintray.com/js-externals" }
+    maven { url = 'https://dl.bintray.com/rjaros/kotlin' }
 }
 evaluationDependsOn(":common")
 
@@ -18,6 +20,8 @@ dependencies {
     compile "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.3.2"
     implementation 'com.github.samgarasx:kotlin-moment:2.24.0-pre.0-kotlin-1.3.50'
     implementation "com.benasher44:uuid:0.0.6"
+    implementation 'com.willowtreeapps:fuzzywuzzy-kotlin-js:0.9.0'
+    compileOnly "pl.treksoft:jquery-kotlin:0.0.4"
 }
 
 kotlinFrontend {
@@ -31,6 +35,7 @@ kotlinFrontend {
         devDependency("file-loader")
         dependency("moment")
         dependency("tinycolor2")
+        dependency("jquery","3.3.1")
         devDependency("terser-webpack-plugin")
     }
 

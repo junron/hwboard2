@@ -13,12 +13,14 @@ object FrontendWS {
   private lateinit var webSocket: WebSocket
   private lateinit var user: User
   private val callbacks = mutableListOf<(Unit) -> Unit>()
+  private val messageCallbacks = mutableListOf<(WebsocketMessage) -> Unit>()
 
   @UnstableDefault
   fun websocketConnect() {
     val webSocketLocal = WebSocket(
       window.location.protocol.replace("http", "ws") +
-          "//" + window.location.host.replace("9090","8080") + "/websocket")
+          "//" + window.location.host.replace("9090", "8080") + "/websocket"
+    )
     webSocketLocal.onopen = {
       webSocket = webSocketLocal
       window.asDynamic()["websocket"] = webSocket
@@ -51,28 +53,29 @@ object FrontendWS {
           State.user = user
           callbacks.forEach { it(Unit) }
         }
+        else -> {
+          messageCallbacks.forEach { it(message) }
+        }
       }
     }
   }
 
-
   @UnstableDefault
-  fun sendMessage(message: String, recipient: User) {
-    send(Message(message, user, recipient))
-  }
-
-  @UnstableDefault
-  fun sendHomework(homework: Homework){
-    send(HomeworkMessage(homework))
-  }
-
-  @UnstableDefault
-  private fun send(message: WebsocketMessage) {
+  fun send(message: WebsocketMessage) {
     if (!::webSocket.isInitialized) return
     webSocket.send(Json.stringify(WebsocketMessage.serializer(), message))
   }
 
-  fun onConnect(callback:(Unit) -> Unit) {
+  fun onConnect(callback: (Unit) -> Unit) {
     callbacks += callback
+  }
+
+  fun onMessage(callback: (WebsocketMessage) -> Unit) {
+    messageCallbacks += callback
+  }
+
+  @UnstableDefault
+  fun addHomework(homework: Homework) {
+    send(AddHomework(homework))
   }
 }

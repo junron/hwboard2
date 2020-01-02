@@ -19,7 +19,7 @@ jobs:
           ./gradlew frontend:processResources
           ./gradlew -Pprod=true frontend:webpack-bundle || :
           ./gradlew -Pprod=true frontend:webpack-bundle || :
-          mkdir backend/build/assets
+          mkdir backend/build/assets -p
           cp frontend/resources/web/index.html backend/build/assets
           cp frontend/build/bundle backend/build/assets -r
           ./gradlew backend:shadowJar

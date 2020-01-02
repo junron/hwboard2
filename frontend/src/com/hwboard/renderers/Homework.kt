@@ -1,5 +1,6 @@
-package com.hwboard
+package com.hwboard.renderers
 
+import com.hwboard.*
 import com.hwboard.interop.moment.moment
 import kotlin.js.Date
 
@@ -39,14 +40,14 @@ ${tags.render()}
 </div>
 </div>
 </div>
-<div class="swipeout-actions-left hwboard-item-info">
+<div class="swipeout-actions-left swipeout-info-button">
 <a class="swipeout-close swipeout-overswipe" style="background-color:#2196f3">Info</a>
 </div>
 """.trimIndent()
   return if (admin)
     baseHomeworkRender + """<div class="swipeout-actions-right">
     <a class="swipeout-close swipeout-edit-button" style="background-color:#ff9800">Edit</a>
-    <a class="swipeout-close hwboard-item-delete" style="background-color:#f44336">Delete</a>
+    <a class="swipeout-close swipeout-delete-button" style="background-color:#f44336">Delete</a>
     </div>
     </li>
     """.trimIndent()

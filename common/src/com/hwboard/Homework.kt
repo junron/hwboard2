@@ -1,13 +1,12 @@
 package com.hwboard
 
+import com.benasher44.uuid.uuid4
 import com.hwboard.interop.Date
-import kotlinx.serialization.ContextualSerialization
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.toUtf8Bytes
 
 @Serializable
 data class Homework(
-  @ContextualSerialization
   val id: String,
   val subject: Subject,
   val dueDate: Date,
@@ -22,14 +21,15 @@ enum class SortType {
 
   companion object {
     fun deserialize(name: String) =
-      when(name){
+      when (name) {
         "Due date" -> Date
         "Subject name" -> Subject
         else -> null
       }
   }
+
   fun serialize(): String {
-    return when(this){
+    return when (this) {
       Subject -> "Subject name"
       Date -> "Due date"
     }

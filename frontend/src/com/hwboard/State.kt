@@ -1,6 +1,7 @@
 package com.hwboard
 
 import com.hwboard.SortType.Companion.deserialize
+import com.hwboard.renderers.render
 import kotlin.browser.document
 import kotlin.browser.localStorage
 

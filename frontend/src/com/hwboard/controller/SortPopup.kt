@@ -1,11 +1,12 @@
-package com.hwboard
+package com.hwboard.controller
 
+import com.hwboard.Framework7
+import com.hwboard.State
 import com.hwboard.State.Sort
 import com.hwboard.State.app
 import com.hwboard.utils.getCheckedValue
 import org.w3c.dom.HTMLInputElement
 import org.w3c.dom.asList
-import org.w3c.dom.get
 import kotlin.browser.document
 
 object SortPopup {
@@ -21,10 +22,8 @@ object SortPopup {
     (document.querySelector("input[type=radio][name=order][value='$sortOrder']")
         as HTMLInputElement).checked = true
 
-    app.loadModule(Framework7.importF7Module("input"))
-    app.loadModule(Framework7.importF7Module("checkbox"))
-    app.loadModule(Framework7.importF7Module("grid"))
-    app.loadModule(Framework7.importF7Module("radio"))
+    app.loadModule(Framework7.importF7Module("checkbox").default)
+    app.loadModule(Framework7.importF7Module("radio").default)
 
     document.querySelector(".page-current #sort-confirm")
       ?.addEventListener("click", {

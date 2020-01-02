@@ -3,35 +3,50 @@ package com.hwboard
 import com.hwboard.WebsocketMessage.*
 import com.hwboard.auth.DiscordAuth
 import com.hwboard.auth.Jwt
+import com.hwboard.database.HomeworkDB
 import io.ktor.application.ApplicationCall
 import io.ktor.http.cio.websocket.CloseReason
 import io.ktor.http.cio.websocket.Frame
 import io.ktor.http.cio.websocket.WebSocketSession
 import io.ktor.http.cio.websocket.close
-import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.UnstableDefault
 import kotlinx.serialization.json.Json
 
 object BackendWS {
-  private val users = mutableMapOf<User, WebSocketSession>()
+  private val users = mutableMapOf<User, List<WebSocketSession>>()
   @UnstableDefault
   suspend fun handle(message: WebsocketMessage, context: WebSocketSession) {
+    val user = auth(context)
     when (message) {
-      is Message -> {
-        val recipientSession = users[message.recipient]
-          ?: return send(Error("Recipient not found"), context)
-        send(message, recipientSession)
+      is AddHomework -> {
+        if (user.write && user == message.homework.lastEditPerson) {
+          HomeworkDB += message.homework.sanitized()
+          broadcast(HomeworkAdded(message.homework.sanitized()))
+        }
       }
-      is Auth -> {
-        users[message.user] = context
-        send(message, context)
-        broadcast(Connect(message.user))
+      is DeleteHomework -> {
+        if (user.write) {
+          HomeworkDB -= message.id
+          broadcast(HomeworkDeleted(message.id))
+        }
       }
-      is HomeworkMessage -> {
-        println(message.homework)
+      is EditHomework -> {
+        if (user.write && user == message.homework.lastEditPerson) {
+          HomeworkDB[message.homework.id] = message.homework.sanitized()
+          broadcast(HomeworkEdited(message.homework.sanitized()))
+        }
+      }
+      is LoadHomework -> {
+        if (user.read) {
+          send(HomeworkLoaded(HomeworkDB.getAll()), context)
+        }
       }
     }
   }
+
+  private fun auth(context: WebSocketSession) =
+    users.filterValues { sessions -> context in sessions }.keys.first()
+
 
   @UnstableDefault
   suspend fun handleConnect(call: ApplicationCall, context: WebSocketSession) {
@@ -46,21 +61,27 @@ object BackendWS {
       send(Error("Unauthorized"), context)
       context.close(CloseReason(401, "Unauthorized"))
     }
-    users[user] = context
+    users[user] = if (users[user] == null)
+      listOf(context)
+    else
+      users[user]!! + context
+
     send(Auth(user), context)
     broadcast(Connect(user))
   }
 
   @UnstableDefault
   suspend fun handleDisconnect(context: WebSocketSession) {
-    val user = users.filter { (_, v) -> v == context }.keys.first()
+    val user = auth(context)
     users.remove(user)
     broadcast(Disconnect(user))
   }
 
   @UnstableDefault
   suspend fun broadcast(message: WebsocketMessage) {
-    users.forEach { (_, session) -> runBlocking { send(message, session) } }
+    for (webSocketSession in users.values.flatten()) {
+      send(message, webSocketSession)
+    }
   }
 
   @UnstableDefault

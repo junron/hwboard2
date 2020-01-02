@@ -6,6 +6,7 @@ import com.hwboard.BackendWS.handleDisconnect
 import com.hwboard.auth.DiscordAuth
 import com.hwboard.auth.Jwt.verifyAndDecode
 import com.hwboard.auth.createJwt
+import com.hwboard.database.HomeworkDB
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -31,6 +32,7 @@ val isJar = {}.javaClass.getResource("/assets/index.html") != null
 
 @UnstableDefault
 fun Application.main() {
+
   install(WebSockets)
   routing {
     get("/discord/token") {

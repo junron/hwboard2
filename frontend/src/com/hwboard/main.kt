@@ -10,6 +10,8 @@ import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.js.Date as JsDate
 import com.hwboard.State.Homework
+import com.hwboard.controller.MainController
+import com.hwboard.controller.Swipeouts
 
 @UnstableDefault
 fun main() {
@@ -22,45 +24,6 @@ fun main() {
   window.asDynamic()["state"] = State
 
   websocketConnect()
-  FrontendWS.onConnect {
-    Homework.homework  = listOf(
-      Homework(
-        uuid4().toString(),
-        Subject("English"),
-        moment().add(3, "hours").toDate().toDate(),
-        "Hello, world",
-        listOf(Tag("Graded", "red")),
-        State.user,
-        JsDate().toDate()
-      ),
-      Homework(
-        uuid4().toString(),
-        Subject("English"),
-        moment().add(1, "days").toDate().toDate(),
-        "Hello, world",
-        listOf(Tag("Graded", "red")),
-        State.user,
-        JsDate().toDate()
-      ),
-      Homework(
-        uuid4().toString(),
-        Subject("English"),
-        moment().add(9, "days").toDate().toDate(),
-        "Hello, world",
-        listOf(Tag("Graded", "red")),
-        State.user,
-        JsDate().toDate()
-      ),
-      Homework(
-        uuid4().toString(),
-        Subject("Math"),
-        moment().add(9, "weeks").toDate().toDate(),
-        "Hello, world",
-        listOf(Tag("Graded", "red")),
-        State.user,
-        JsDate().toDate()
-      )
-    )
-    Homework.rerender()
-  }
+  MainController.init()
+  Swipeouts.init()
 }
