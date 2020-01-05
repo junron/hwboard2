@@ -19,9 +19,10 @@ jobs:
           ./gradlew frontend:processResources
           ./gradlew -Pprod=true frontend:webpack-bundle || :
           ./gradlew -Pprod=true frontend:webpack-bundle || :
-          mkdir backend/build/assets -p
-          cp frontend/resources/web/index.html backend/build/assets
-          cp frontend/build/bundle backend/build/assets -r
+          ./gradlew backend:shadowJar
+          mkdir backend/build/resources/main/assets -p
+          cp frontend/resources/web/index.html backend/build/resources/main/assets
+          cp frontend/build/bundle backend/build/resources/main/assets -r
           ./gradlew backend:shadowJar
       - name: Upload artifacts
         uses: jakejarvis/s3-sync-action@master
