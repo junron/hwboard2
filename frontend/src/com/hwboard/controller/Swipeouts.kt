@@ -10,9 +10,14 @@ object Swipeouts {
   fun init() {
     jq(document).on("click",".swipeout-delete-button"){ event: JQueryEventObject, _: Any ->
       val id = jq(event.target).parents(".hwitem").attr("homeworkid")
-      println(id)
       FrontendWS.send(WebsocketMessage.DeleteHomework(id))
       return@on Unit
     }
+
+//    jq(document).on("click",".swipeout-edit-button"){ event: JQueryEventObject, _: Any ->
+//      val id = jq(event.target).parents(".hwitem").attr("homeworkid")
+//      println(id)
+//      return@on Unit
+//    }
   }
 }

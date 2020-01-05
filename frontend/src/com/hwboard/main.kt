@@ -1,17 +1,10 @@
 package com.hwboard
 
-import com.benasher44.uuid.uuid4
 import com.hwboard.FrontendWS.websocketConnect
-import com.hwboard.interop.moment.moment
-import com.hwboard.interop.toDate
-import externals.require
-import kotlinx.serialization.UnstableDefault
-import kotlin.browser.document
-import kotlin.browser.window
-import kotlin.js.Date as JsDate
-import com.hwboard.State.Homework
 import com.hwboard.controller.MainController
 import com.hwboard.controller.Swipeouts
+import kotlinx.serialization.UnstableDefault
+import kotlin.browser.window
 
 @UnstableDefault
 fun main() {

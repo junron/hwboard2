@@ -1,37 +1,43 @@
 package com.hwboard.database
 
 import com.hwboard.Homework
-import com.toddway.shelf.FileStorage
-import com.toddway.shelf.KotlinxSerializer
-import com.toddway.shelf.Shelf
-import com.toddway.shelf.get
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.list
 import java.io.File
 
 object HomeworkDB {
-  private val database = Shelf(FileStorage(
-    if (File("data/homework").exists())
-      File("data/homework")
-    else
-      File("../data/homework")
-  ), KotlinxSerializer().apply {
-    register(Homework.serializer())
-  })
+  private val file = if (File("data").exists())
+    File("data/homework.json")
+  else
+    File("../data/homework.json")
+
+  private val serializer = Homework.serializer().list
+
+  private fun readFile() = file.readText()
+  private fun writeFile(data: List<Homework>) = file.writeText(
+    Json.indented.stringify(serializer, data)
+  )
 
   operator fun get(id: String) =
-    database.item(id).get<Homework>()
+    getAll().find { it.id == id }
 
-  fun getAll() = database.all().map { it.get<Homework>()!! }
+  fun getAll() = Json.indented.parse(serializer, readFile())
 
   operator fun minusAssign(id: String) {
-    database.item(id).remove()
-    database.item(id).remove()
+    writeFile(
+      getAll().filter { it.id != id }
+    )
   }
 
   operator fun plusAssign(value: Homework) {
-    database.item(value.id).put(value)
+    writeFile(
+      getAll() + value
+    )
   }
 
   operator fun set(id: String, value: Homework) {
-    database.item(id).put(value)
+    writeFile(
+      getAll().filter { it.id != id } + value
+    )
   }
 }

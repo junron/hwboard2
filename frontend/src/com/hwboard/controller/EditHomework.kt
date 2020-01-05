@@ -1,6 +1,5 @@
 package com.hwboard.controller
 
-import com.benasher44.uuid.uuid4
 import com.hwboard.*
 import com.hwboard.Constants.subjects
 import com.hwboard.Constants.tags
@@ -47,7 +46,7 @@ object EditHomework {
   private fun initDate() {
     jq(document).on("input", ".page-current #dueDate") { _: JQueryEventObject, _: Any ->
       val date = getDate()
-      if (date.isValid()) {
+      if (date.isValid() && date.isAfter(moment())) {
         jq(".page-current .date-input").removeClass("item-input-invalid")
         jq(".page-current #date-input-info").text(date.format("D/M/YYYY"))
       } else {
@@ -112,7 +111,7 @@ object EditHomework {
 
   private fun getHomework() =
     Homework(
-      uuid4().toString(),
+      "",
       Subject(jq("#subject-name").`val`().toString()),
       getDate().startOf("day").toDate().toDate(),
       jq("#homework-name").`val`().toString().trim(),

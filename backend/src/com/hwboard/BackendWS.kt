@@ -20,8 +20,9 @@ object BackendWS {
     when (message) {
       is AddHomework -> {
         if (user.write && user == message.homework.lastEditPerson) {
-          HomeworkDB += message.homework.sanitized()
-          broadcast(HomeworkAdded(message.homework.sanitized()))
+          val sanitized = message.homework.sanitized()
+          HomeworkDB += sanitized
+          broadcast(HomeworkAdded(sanitized))
         }
       }
       is DeleteHomework -> {
@@ -32,8 +33,9 @@ object BackendWS {
       }
       is EditHomework -> {
         if (user.write && user == message.homework.lastEditPerson) {
-          HomeworkDB[message.homework.id] = message.homework.sanitized()
-          broadcast(HomeworkEdited(message.homework.sanitized()))
+          val sanitized = message.homework.sanitized()
+          HomeworkDB[message.homework.id] = sanitized
+          broadcast(HomeworkEdited(sanitized))
         }
       }
       is LoadHomework -> {

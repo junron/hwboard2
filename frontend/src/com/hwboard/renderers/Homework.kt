@@ -57,7 +57,7 @@ ${tags.render()}
 
 fun Homework.displayDate(): String {
   val date = moment(dueDate.date)
-  val daysLeft = date.diff(moment(), "days")
+  val daysLeft = date.diff(moment().startOf("day"), "days")
   return when {
     date.isSame(Date(), "day") -> "today"
     date.isSame(moment().add(1, "days"), "day") -> "tomorrow"
