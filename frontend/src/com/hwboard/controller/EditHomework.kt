@@ -4,7 +4,6 @@ import com.hwboard.*
 import com.hwboard.Constants.subjects
 import com.hwboard.Constants.tags
 import com.hwboard.State.app
-import com.hwboard.interop.moment.moment
 import com.hwboard.interop.toDate
 import com.hwboard.utils.removeFloating
 import com.willowtreeapps.fuzzywuzzy.diffutils.FuzzySearch
@@ -16,6 +15,7 @@ import kotlin.js.json
 import pl.treksoft.jquery.jQuery as jq
 
 object EditHomework {
+  private val Date = externals.require("sugar-date").Date
   var homeworkEdited: Homework? = null
 
   fun beforeInit() {
@@ -46,9 +46,9 @@ object EditHomework {
   private fun initDate() {
     jq(document).on("input", ".page-current #dueDate") { _: JQueryEventObject, _: Any ->
       val date = getDate()
-      if (date.isValid() && date.isAfter(moment())) {
+      if (Date.isValid(date) as Boolean && Date.isFuture(date) as Boolean) {
         jq(".page-current .date-input").removeClass("item-input-invalid")
-        jq(".page-current #date-input-info").text(date.format("D/M/YYYY"))
+        jq(".page-current #date-input-info").text(Date.short(date) as String)
       } else {
         jq(".page-current .date-input").addClass("item-input-invalid")
         jq(".page-current #due-date-validation-err").text("Invalid date")
@@ -95,7 +95,7 @@ object EditHomework {
     jq("#subject-name").`val`().toString().isNotBlank() &&
         jq("#subject-name").`val`().toString() in subjects &&
         jq("#homework-name").`val`().toString().isNotBlank() &&
-        getDate().isValid() && getDate().isAfter(moment())
+        Date.isValid(getDate()) as Boolean && Date.isFuture(getDate()) as Boolean
 
   private fun updateButtonStatus() {
     with(jq(".page-current #update-homework-button")) {
@@ -113,7 +113,7 @@ object EditHomework {
     Homework(
       "",
       Subject(jq("#subject-name").`val`().toString()),
-      getDate().startOf("day").toDate().toDate(),
+      (getDate() as Date).toDate(),
       jq("#homework-name").`val`().toString().trim(),
       jq(".page-current #selectTagsElem .item-inner .item-after").text().split(", ")
         .mapNotNull { tagName ->
@@ -123,7 +123,7 @@ object EditHomework {
       Date().toDate()
     )
 
-  private fun getDate() = moment(jq(".page-current #dueDate").`val`().toString(), "D/M")
+  private fun getDate() = Date.endOfDay(Date.create(jq(".page-current #dueDate").`val`().toString()))
 
 
   private fun reset() {

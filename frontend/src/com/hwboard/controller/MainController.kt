@@ -8,6 +8,7 @@ import com.hwboard.State.Homework
 import com.hwboard.State.Homework.homework
 import com.hwboard.WebsocketMessage.*
 import kotlinx.serialization.UnstableDefault
+import pl.treksoft.jquery.jQuery
 
 @UnstableDefault
 object MainController {
@@ -17,6 +18,7 @@ object MainController {
 
   fun init() {
     onConnect {
+      if (!State.user.write) jQuery("#fab-add-homework").hide()
       loadHomework()
     }
     onMessage { message ->
@@ -27,7 +29,7 @@ object MainController {
         }
         is HomeworkEdited -> {
           println("Edited homework ${message.homework}")
-          homework.map { if(it.id == message.homework.id) message.homework else it }
+          homework.map { if (it.id == message.homework.id) message.homework else it }
         }
         is HomeworkDeleted -> {
           println("Deleted homework ${homework.find { it.id == message.id }}")

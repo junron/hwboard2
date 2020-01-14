@@ -1,10 +1,11 @@
 package com.hwboard.renderers
 
 import com.hwboard.*
-import com.hwboard.interop.moment.moment
-import kotlin.js.Date
+import kotlin.browser.window
+import kotlin.reflect.typeOf
 
 fun Homework.render(sortType: SortType, admin: Boolean): String {
+  val Date = externals.require("sugar-date").Date
   val baseHomeworkRender = """
 <li class="hwitem swipeout" homeworkId="$id">
 <div class="swipeout-content item-content">
@@ -30,7 +31,7 @@ ${when (sortType) {
     }
     SortType.Subject -> {
       """Due ${displayDate()}
-      (${moment(dueDate.date).format("D/M")})
+      (${Date.format(Date.create(dueDate.date),"{d}/{M}")})
       """.trimIndent()
     }
   }}
@@ -40,13 +41,13 @@ ${tags.render()}
 </div>
 </div>
 </div>
-<div class="swipeout-actions-left swipeout-info-button">
+<!--<div class="swipeout-actions-left swipeout-info-button">
 <a class="swipeout-close swipeout-overswipe" style="background-color:#2196f3">Info</a>
-</div>
+</div>-->
 """.trimIndent()
   return if (admin)
     baseHomeworkRender + """<div class="swipeout-actions-right">
-    <a class="swipeout-close swipeout-edit-button" style="background-color:#ff9800">Edit</a>
+    <!--<a class="swipeout-close swipeout-edit-button" style="background-color:#ff9800">Edit</a>-->
     <a class="swipeout-close swipeout-delete-button" style="background-color:#f44336">Delete</a>
     </div>
     </li>
@@ -56,11 +57,12 @@ ${tags.render()}
 }
 
 fun Homework.displayDate(): String {
-  val date = moment(dueDate.date)
-  val daysLeft = date.diff(moment().startOf("day"), "days")
+  val Date = externals.require("sugar-date").Date
+  val date = Date.create(dueDate.date)
+  val daysLeft = Date.daysFromNow(date)
   return when {
-    date.isSame(Date(), "day") -> "today"
-    date.isSame(moment().add(1, "days"), "day") -> "tomorrow"
+    Date.isToday(date) as Boolean -> "today"
+    Date.isTomorrow(date) as Boolean -> "tomorrow"
     else -> "in $daysLeft days"
   }
 }
@@ -129,11 +131,11 @@ fun List<Homework>.render(
   } + "</div></ul>"
 }
 
-fun List<Tag>.render(): String{
+fun List<Tag>.render(): String {
   var result = ""
   this.forEach {
     val tinycolor = externals.require("tinycolor2")
-    val textColor = if((tinycolor.readability(it.color,"#fff") as Double) < 2.0)
+    val textColor = if ((tinycolor.readability(it.color, "#fff") as Double) < 2.0)
       "black"
     else
       "white"
