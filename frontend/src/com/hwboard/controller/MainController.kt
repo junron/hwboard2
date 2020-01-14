@@ -1,6 +1,7 @@
 package com.hwboard.controller
 
 import com.hwboard.FrontendWS.onConnect
+import com.hwboard.FrontendWS.onDisconnect
 import com.hwboard.FrontendWS.onMessage
 import com.hwboard.FrontendWS.send
 import com.hwboard.State
@@ -19,7 +20,12 @@ object MainController {
   fun init() {
     onConnect {
       if (!State.user.write) jQuery("#fab-add-homework").hide()
+      jQuery("#connection-status").text("Connected")
       loadHomework()
+
+      onDisconnect {
+        jQuery("#connection-status").text("Disconnected")
+      }
     }
     onMessage { message ->
       when (message) {

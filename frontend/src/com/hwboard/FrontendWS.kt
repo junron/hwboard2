@@ -17,17 +17,17 @@ object FrontendWS {
 
   @UnstableDefault
   fun websocketConnect() {
-    val webSocketLocal = WebSocket(
+    val webSocketConnection = WebSocket(
       window.location.protocol.replace("http", "ws") +
           "//" + window.location.host.replace("9090", "8080") + "/websocket"
     )
-    webSocketLocal.onopen = {
-      webSocket = webSocketLocal
+    webSocketConnection.onopen = {
+      webSocket = webSocketConnection
       window.asDynamic()["websocket"] = webSocket
       window.asDynamic()["frontendWs"] = FrontendWS
       null
     }
-    webSocketLocal.onmessage = ::handle
+    webSocketConnection.onmessage = ::handle
   }
 
   @UnstableDefault
@@ -75,6 +75,10 @@ object FrontendWS {
 
   fun onMessage(callback: (WebsocketMessage) -> Unit) {
     messageCallbacks += callback
+  }
+
+  fun onDisconnect(callback: (Any) -> Unit){
+    webSocket.onclose = callback
   }
 
   @UnstableDefault
