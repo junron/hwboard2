@@ -19,48 +19,51 @@ object BackendWS {
     val user = auth(context)
     when (message) {
       is AddHomework -> {
-        if (user.write && user == message.homework.lastEditPerson) {
+        if (user?.write == true && user == message.homework.lastEditPerson) {
           val sanitized = message.homework.sanitized()
           HomeworkDB += sanitized
           broadcast(HomeworkAdded(sanitized))
         }
       }
       is DeleteHomework -> {
-        if (user.write) {
+        if (user?.write == true) {
           HomeworkDB -= message.id
           broadcast(HomeworkDeleted(message.id))
         }
       }
       is EditHomework -> {
-        if (user.write && user == message.homework.lastEditPerson) {
+        if (user?.write == true && user == message.homework.lastEditPerson) {
           val sanitized = message.homework.sanitized()
           HomeworkDB[message.homework.id] = sanitized
           broadcast(HomeworkEdited(sanitized))
         }
       }
       is LoadHomework -> {
-        if (user.read) {
-          send(HomeworkLoaded(HomeworkDB.getAll()), context)
+        if (user?.read == true) {
+          send(HomeworkLoaded(HomeworkDB.getAllCurrent()), context)
         }
       }
     }
   }
 
   private fun auth(context: WebSocketSession) =
-    users.filterValues { sessions -> context in sessions }.keys.first()
+    users.filterValues { sessions -> context in sessions }.keys.firstOrNull()
 
 
   @UnstableDefault
   suspend fun handleConnect(call: ApplicationCall, context: WebSocketSession) {
-    val token = call.request.cookies["user_sess"] ?: return context.close(CloseReason(403, "Unauthenticated"))
+    val token = call.request.cookies["user_sess"] ?: return run {
+      send(AuthError("Unauthenticated"), context)
+      context.close(CloseReason(403, "Unauthenticated"))
+    }
     val authenticatedUser = Jwt.verifyAndDecode(token, DiscordUser.serializer())
       ?: return run {
-        send(Error("Unauthenticated"), context)
+        send(AuthError("Unauthenticated"), context)
         context.close(CloseReason(403, "Unauthenticated"))
       }
     val user = DiscordAuth.getAuthorization(authenticatedUser)
     if (!user.read) return run {
-      send(Error("Unauthorized"), context)
+      send(AuthError("Unauthorized"), context)
       context.close(CloseReason(401, "Unauthorized"))
     }
     users[user] = if (users[user] == null)
@@ -74,7 +77,7 @@ object BackendWS {
 
   @UnstableDefault
   suspend fun handleDisconnect(context: WebSocketSession) {
-    val user = auth(context)
+    val user = auth(context) ?: return
     users.remove(user)
     broadcast(Disconnect(user))
   }

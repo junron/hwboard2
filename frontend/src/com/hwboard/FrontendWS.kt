@@ -47,6 +47,9 @@ object FrontendWS {
         is Error -> {
           println("Error occurred: ${message.message}")
         }
+        is AuthError -> {
+          window.location.href = "/discord/auth"
+        }
         is Auth -> {
           println("Authenticated as ${message.user.name}")
           user = message.user

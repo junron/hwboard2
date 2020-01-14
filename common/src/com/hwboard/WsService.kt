@@ -10,6 +10,9 @@ sealed class WebsocketMessage {
   data class Error(val message: String) : WebsocketMessage()
 
   @Serializable
+  data class AuthError(val message: String) : WebsocketMessage()
+
+  @Serializable
   data class Connect(val user: User) : WebsocketMessage()
 
   @Serializable

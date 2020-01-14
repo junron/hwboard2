@@ -49,10 +49,14 @@ fun Application.main() {
           path = "/"
         )
       )
-      call.respondRedirect("/verify", false)
+      call.respondRedirect("/", false)
     }
     get("/discord/auth") {
       call.respondRedirect(DiscordAuth.oauthUrl, false)
+    }
+    get("/logout") {
+      call.response.cookies.appendExpired("user_sess")
+      call.respondRedirect("/discord/auth")
     }
     get("/verify") {
       val token = call.request.cookies["user_sess"]
