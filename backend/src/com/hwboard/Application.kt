@@ -54,6 +54,19 @@ fun Application.main() {
     get("/discord/auth") {
       call.respondRedirect(DiscordAuth.oauthUrl, false)
     }
+    get("/view") {
+      call.response.cookies.append(
+        Cookie(
+          "user_sess",
+          DiscordUser("Anonymous", "00000").createJwt(),
+          httpOnly = true,
+//              1 month
+          maxAge = 2_629_746,
+          path = "/"
+        )
+      )
+      call.respondRedirect("/", false)
+    }
     get("/logout") {
       call.response.cookies.appendExpired("user_sess")
       call.respondRedirect("/discord/auth")

@@ -30,6 +30,8 @@ object FrontendWS {
     webSocketConnection.onmessage = ::handle
   }
 
+  fun isDisconnected() = webSocket.readyState != 1.toShort()
+
   @UnstableDefault
   private fun handle(event: MessageEvent) {
     GlobalScope.launch {
@@ -77,7 +79,7 @@ object FrontendWS {
     messageCallbacks += callback
   }
 
-  fun onDisconnect(callback: (Any) -> Unit){
+  fun onDisconnect(callback: (Any) -> Unit) {
     webSocket.onclose = callback
   }
 
