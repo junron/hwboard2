@@ -15,6 +15,7 @@ object Constants {
   val tags = listOf(
     Tag("Graded", "red"),
     Tag("Project", "#ffcc00"),
-    Tag("Optional", "#4cd964")
+    Tag("Optional", "#4cd964"),
+    Tag("Assessment", "#f18e33")
   )
 }
